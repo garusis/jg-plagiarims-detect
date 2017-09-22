@@ -1,0 +1,58 @@
+{
+  "name": "jg-seed",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "repository": "git@github.com:garusis/jg-node-docker-seed.git",
+  "author": "Marcos Javier Alvarez<garusis@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=8.2.0"
+  },
+  "docker":{
+    "image":"jg/base",
+    "process":"base"
+  },
+  "scripts": {
+    "start": "node .",
+    "debug": "yarn run compile && node --inspect-brk=0.0.0.0:41628 ./dist/index.js",
+    "get-debug-url": "curl -s http://localhost:41628/json/list | jq -r '.[0].devtoolsFrontendUrl'",
+    "open-debug-chrome": "echo \"Open in Google Chrome: $(yarn run get-debug-url --silent)\"",
+    "babel": "./node_modules/.bin/babel",
+    "compile": "yarn run babel -- src -d dist --source-maps",
+    "watch": "node dev_launcher.js",
+    "deploy": "yarn run d-build && aptible deploy --docker-image \"$(yarn run d-image-name --silent)-prod\" --app \"$(yarn run d-process-name --silent)-$DEPLOY_ENV\"",
+    "d-image-name": "node -e \"console.log(require('./package.json').docker.image)\"",
+    "d-process-name": "node -e \"console.log(require('./package.json').docker.process)\"",
+    "d-dirbase": "node -e \"console.log(require('./package.json').name)\"",
+    "d-build": "yarn run compile && sudo docker build -f docker/prod.Dockerfile -t $(yarn run d-image-name --silent)-prod .",
+    "d-run": "sudo docker run --rm -d -p 3001:3000 --name $(yarn run d-process-name --silent)-prod $(yarn run d-image-name --silent)-prod",
+    "d-build:dev": "sudo docker build -f docker/dev.Dockerfile --build-arg \"USER=${USER}\" --build-arg \"UID=$(id -u $USER)\" --build-arg \"GID=$(id -g $USER)\" --build-arg \"DIR_BASE=$(yarn run d-dirbase --silent)\" -t $(yarn run d-image-name --silent)-dev .",
+    "d-run:dev": "sudo docker run -d --network host -v \"$PWD:/home/emergeuser/$(yarn run d-dirbase --silent)\" -v \"$HOME/.cache:/home/emergeuser/.cache\" --name $(yarn run d-process-name --silent)-dev -it --entrypoint \"/bin/bash\" $(yarn run d-image-name --silent)-dev",
+    "d-debug:dev": "( sleep 8; yarn run open-debug-chrome ) & sudo docker run --rm  --network host -v \"$PWD:/home/emergeuser/$(yarn run d-dirbase --silent)\" -v \"$HOME/.cache:/home/emergeuser/.cache\" --name $(yarn run d-process-name --silent)-debug -it --entrypoint yarn $(yarn run d-image-name --silent)-dev run debug",
+    "d-stop:dev": "sudo docker stop $(yarn run d-process-name --silent)-dev",
+    "d-start:dev": "sudo docker start $(yarn run d-process-name --silent)-dev",
+    "d-rebuild:dev": "yarn run d-stop:dev && yarn run d-rm:dev && yarn run d-rmi:dev && yarn run d-build:dev",
+    "d-rm:dev": "sudo docker rm $(yarn run d-process-name --silent)-dev",
+    "d-rmi:dev": "sudo docker rmi $(yarn run d-image-name --silent)-dev",
+    "d-bash:dev": "sudo docker exec -it $(yarn run d-process-name --silent)-dev bash"
+  },
+  "private": true,
+  "dependencies": {
+    "aws-sdk": "^2.102.0",
+    "babel-polyfill": "^6.26.0",
+    "body-parser": "^1.17.2",
+    "express": "^4.15.4",
+    "helmet": "^3.8.1",
+    "jsonwebtoken": "^7.4.3",
+    "lodash": "^4.17.4",
+    "moment": "^2.18.1",
+    "morgan": "^1.8.2",
+    "request": "^2.81.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.0",
+    "eslint": "^4.4.1",
+    "watch": "^1.0.2"
+  }
+}
