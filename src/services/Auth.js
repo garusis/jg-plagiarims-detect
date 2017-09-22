@@ -14,7 +14,7 @@ export function signToken(payload, options = {algorithm: "HS256"}) {
 }
 
 /**
- * Create a token for the specified payload using the recommended settings to communicate with another emerge
+ * Create a token for the specified payload using the recommended settings to communicate with another JG
  * microservices.
  * @param {Object} [payload]
  * @returns {String}
@@ -30,8 +30,8 @@ export function signTokenForRelatedService(payload = {}) {
 }
 
 /**
- * Middleware to allow check is an request comes with a valid token (time and sign) an if  it comes from another emerge
- * microservice. Emerge microservices uses the same JWT_SECRET_KEY and JTW_ISSUER and that allow us check this.
+ * Middleware to allow check is an request comes with a valid token (time and sign) an if  it comes from another JGS
+ * microservice. JG microservices uses the same JWT_SECRET_KEY and JTW_ISSUER and that allow us check this.
  * @param req
  * @param res
  * @param next

@@ -12,7 +12,7 @@ export const HTTP_METHODS = {
 }
 
 /**
- * Send a HTTP Request using the more recommended structure to another emerge microservices.
+ * Send a HTTP Request using the more recommended structure to another JG microservices.
  * @param {String} url
  * @param {Object} [body]
  * @param {String} [method]

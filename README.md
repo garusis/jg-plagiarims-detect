@@ -5,11 +5,11 @@ My basic project seeder with NodeJS, Docker and Yarn.
 In development you need install [Yarn](https://yarnpkg.com/en/)(>=0.24), [NodeJS](https://nodejs.org)(>=4), [GIT](https://git-scm.com) and [Docker](https://www.docker.com/)(>=17).
 
 ## For development
-Emerge-uw use docker for development. The dev.Dockerfile can be used to build a development environment with all required tools and settings.
+This seed use docker for development. The dev.Dockerfile can be used to build a development environment with all required tools and settings.
 
 ### Important
 To use the docker dev environment you need add in the project root and .env file with the environment variables for the local env.
-The basic variables and its values can be found in *Google Drive* in `Emerge_microservices_env/${project_name}/local` 
+The basic variables and its values can be found in *Google Drive* in `JGProjects/${project_name}/local` 
   
 ### How to use
 You can use the npm tasks to build and run the docker container and also get a bash terminal inside the container.

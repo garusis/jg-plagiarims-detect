@@ -5,22 +5,22 @@ ARG USER
 ARG UID
 ARG GID
 ARG DIR_BASE
-ARG HOME=/home/emergeuser
+ARG HOME=/home/jguser
 
 RUN echo "deb http://ftp.debian.org/debian wheezy-backports main" >> /etc/apt/sources.list
 RUN apt-get update --fix-missing
 RUN apt-get install -y sudo git curl apt-transport-https procps jq
 RUN echo "Defaults        env_reset" > /etc/sudoers
 RUN echo "root        ALL=(ALL:ALL) ALL" >> /etc/sudoers
-RUN echo "emergeuser  ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
+RUN echo "jguser  ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
 RUN echo "node  ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
-RUN useradd -ou ${UID} -p 123456 emergeuser
+RUN useradd -ou ${UID} -p 123456 jguser
 RUN mkdir -p ${HOME}/${DIR_BASE}
-RUN chown emergeuser:emergeuser -R ${HOME}
+RUN chown jguser:jguser -R ${HOME}
 
 
 
-USER emergeuser
+USER jguser
 
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
