@@ -1,5 +1,5 @@
-# jg-plagiarims-detect
-A simple tool to simplify plagiarims checking in documents using sources like Google or Google Academics.
+# jg-node-docker-seed
+My basic project seeder with NodeJS, Docker and Yarn.
 
 ## Requirements
 In development you need install [Yarn](https://yarnpkg.com/en/)(>=0.24), [NodeJS](https://nodejs.org)(>=4), [GIT](https://git-scm.com) and [Docker](https://www.docker.com/)(>=17).
