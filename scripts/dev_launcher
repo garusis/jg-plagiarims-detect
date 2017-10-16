@@ -9,7 +9,7 @@ watch.createMonitor('./server/src', function (monitor) {
   function start() {
     spawn("yr", ["compile:api"], {stdio: "inherit"})
       .on("exit", function () {
-        mainProcess = spawn("yr", ["start:api"], {stdio: "inherit", env: process.env})
+        mainProcess = fork("./server/dist", {stdio: "inherit", env: process.env})
         mainProcess.on("exit", start)
       })
   }
