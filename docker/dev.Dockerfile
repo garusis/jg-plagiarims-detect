@@ -27,7 +27,6 @@ USER jguser
 RUN echo 'PATH=$PATH:$HOME/$DIR_BASE/scripts' >> ~/.bashrc
 RUN echo 'source ~/.env' >> ~/.bashrc
 RUN echo 'chmod +x -R $HOME/$DIR_BASE/scripts' >> ~/.bashrc
-RUN cat ${HOME}/.bashrc
 RUN sudo ln -s $HOME/$DIR_BASE/.env $HOME/.env
 
 

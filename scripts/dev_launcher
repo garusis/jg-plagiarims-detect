@@ -1,13 +1,15 @@
+#!/usr/bin/env node
+
 const watch = require("watch")
 const {fork, spawn} = require("child_process")
 
-watch.createMonitor('src', function (monitor) {
+watch.createMonitor('./server/src', function (monitor) {
   let mainProcess
 
   function start() {
-    spawn("yarn", ["run", "compile"], {stdio: "inherit"})
+    spawn("yr", ["compile:api"], {stdio: "inherit"})
       .on("exit", function () {
-        mainProcess = fork("./server/dist/index.js", {stdio: "inherit", env: process.env})
+        mainProcess = spawn("yr", ["start:api"], {stdio: "inherit", env: process.env})
         mainProcess.on("exit", start)
       })
   }

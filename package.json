@@ -10,6 +10,9 @@
   "dist":{
     "server": "server/dist/index.js"
   },
+  "src":{
+    "server": "server/src/index.js"
+  },
   "docker":{
     "image":"jg/seed",
     "process":"jg-seed"
@@ -17,23 +20,21 @@
   "scripts": {
     "start": "node .",
 
-    "dist-server": "OP='dist.server' yeval",
-    "dist-front": "OP='dist.server' yeval",
 
-    "start:api": "node server/dist/index.js",
-    "debug": "yarn run compile && node --inspect-brk=0.0.0.0:41628 ./dist/index.js",
+    "start:api": "node $(yeval dist.server)",
+    "debug:api": "yarn run compile && node --inspect-brk=0.0.0.0:41628 ./dist/index.js",
     "get-debug-url": "curl -s http://localhost:41628/json/list | jq -r '.[0].devtoolsFrontendUrl'",
     "open-debug-chrome": "echo \"Open in Google Chrome: $(yarn run get-debug-url --silent)\"",
+    "compile:api": "yr babel server/src -d server/dist --source-maps",
+    "watch:api": "dev_launcher",
+
+
+
     "babel": "./node_modules/.bin/babel",
-    "compile": "yarn run babel -- server/src -d server/dist --source-maps",
-    "watch": "node dev_launcher.js",
-
-
-
     "eval":"node -e \"console.log(require('./package.json').$OP)\"",
 
 
-    "d-image-name": "OP='docker.image' yarn run eval --silent",
+    "d-image-name": "OP='docker.image' yarn run --silent eval",
     "d-process-name": "OP='docker.process' yarn run eval --silent",
     "d-dirbase": "OP='name' yarn run eval --silent",
 

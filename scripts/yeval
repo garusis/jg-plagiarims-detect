@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+OP=$1 yr --silent eval
