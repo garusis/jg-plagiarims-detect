@@ -1,40 +1,54 @@
 {
   "name": "jg-seed",
   "version": "1.0.0",
-  "main": "dist/index.js",
   "repository": "git@github.com:garusis/jg-node-docker-seed.git",
   "author": "Marcos Javier Alvarez<garusis@gmail.com>",
   "license": "MIT",
   "engines": {
     "node": ">=8.2.0"
   },
+  "dist":{
+    "server": "server/dist/index.js"
+  },
   "docker":{
-    "image":"jg/base",
-    "process":"base"
+    "image":"jg/seed",
+    "process":"jg-seed"
   },
   "scripts": {
     "start": "node .",
+
+    "dist-server": "OP='dist.server' yeval",
+    "dist-front": "OP='dist.server' yeval",
+
+    "start:api": "node server/dist/index.js",
     "debug": "yarn run compile && node --inspect-brk=0.0.0.0:41628 ./dist/index.js",
     "get-debug-url": "curl -s http://localhost:41628/json/list | jq -r '.[0].devtoolsFrontendUrl'",
     "open-debug-chrome": "echo \"Open in Google Chrome: $(yarn run get-debug-url --silent)\"",
     "babel": "./node_modules/.bin/babel",
-    "compile": "yarn run babel -- src -d dist --source-maps",
+    "compile": "yarn run babel -- server/src -d server/dist --source-maps",
     "watch": "node dev_launcher.js",
-    "deploy": "yarn run d-build && aptible deploy --docker-image \"$(yarn run d-image-name --silent)-prod\" --app \"$(yarn run d-process-name --silent)-$DEPLOY_ENV\"",
-    "d-image-name": "node -e \"console.log(require('./package.json').docker.image)\"",
-    "d-process-name": "node -e \"console.log(require('./package.json').docker.process)\"",
-    "d-dirbase": "node -e \"console.log(require('./package.json').name)\"",
+
+
+
+    "eval":"node -e \"console.log(require('./package.json').$OP)\"",
+
+
+    "d-image-name": "OP='docker.image' yarn run eval --silent",
+    "d-process-name": "OP='docker.process' yarn run eval --silent",
+    "d-dirbase": "OP='name' yarn run eval --silent",
+
     "d-build": "yarn run compile && sudo docker build -f docker/prod.Dockerfile -t $(yarn run d-image-name --silent)-prod .",
     "d-run": "sudo docker run --rm -d -p 3001:3000 --name $(yarn run d-process-name --silent)-prod $(yarn run d-image-name --silent)-prod",
+
     "d-build:dev": "sudo docker build -f docker/dev.Dockerfile --build-arg \"USER=${USER}\" --build-arg \"UID=$(id -u $USER)\" --build-arg \"GID=$(id -g $USER)\" --build-arg \"DIR_BASE=$(yarn run d-dirbase --silent)\" -t $(yarn run d-image-name --silent)-dev .",
-    "d-run:dev": "sudo docker run -d --network host -v \"$PWD:/home/jguser/$(yarn run d-dirbase --silent)\" -v \"$HOME/.cache:/home/emergeuser/.cache\" --name $(yarn run d-process-name --silent)-dev -it --entrypoint \"/bin/bash\" $(yarn run d-image-name --silent)-dev",
-    "d-debug:dev": "( sleep 8; yarn run open-debug-chrome ) & sudo docker run --rm  --network host -v \"$PWD:/home/jguser/$(yarn run d-dirbase --silent)\" -v \"$HOME/.cache:/home/emergeuser/.cache\" --name $(yarn run d-process-name --silent)-debug -it --entrypoint yarn $(yarn run d-image-name --silent)-dev run debug",
+    "d-run:dev": "sudo docker run -d --network host -v \"$PWD:/home/node/$(yarn run d-dirbase --silent)\" -v \"$HOME/.cache:/home/emergeuser/.cache\" --name $(yarn run d-process-name --silent)-dev -it --entrypoint \"/bin/bash\" $(yarn run d-image-name --silent)-dev",
+    "d-bash:dev": "sudo docker exec -it $(yarn run d-process-name --silent)-dev bash",
+    "d-debug:dev": "( sleep 8; yarn run open-debug-chrome ) & sudo docker run --rm  --network host -v \"$PWD:/home/node/$(yarn run d-dirbase --silent)\" -v \"$HOME/.cache:/home/emergeuser/.cache\" --name $(yarn run d-process-name --silent)-debug -it --entrypoint yarn $(yarn run d-image-name --silent)-dev run debug",
     "d-stop:dev": "sudo docker stop $(yarn run d-process-name --silent)-dev",
     "d-start:dev": "sudo docker start $(yarn run d-process-name --silent)-dev",
     "d-rebuild:dev": "yarn run d-stop:dev && yarn run d-rm:dev && yarn run d-rmi:dev && yarn run d-build:dev",
     "d-rm:dev": "sudo docker rm $(yarn run d-process-name --silent)-dev",
-    "d-rmi:dev": "sudo docker rmi $(yarn run d-image-name --silent)-dev",
-    "d-bash:dev": "sudo docker exec -it $(yarn run d-process-name --silent)-dev bash"
+    "d-rmi:dev": "sudo docker rmi $(yarn run d-image-name --silent)-dev"
   },
   "private": true,
   "dependencies": {
@@ -47,12 +61,67 @@
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
     "morgan": "^1.8.2",
-    "request": "^2.81.0"
+    "request": "^2.81.0",
+    "axios": "^0.16.1",
+    "babel-runtime": "^6.23.0",
+    "debug": "^2.6.8",
+    "less": "^2.7.2",
+    "less-loader": "^4.0.3",
+    "react": "15.4.1",
+    "react-dom": "15.4.1",
+    "react-router": "3.0.0",
+    "react-router-redux": "4.0.7",
+    "react-tap-event-plugin": "^2.0.1",
+    "scriptjs": "^2.5.8"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.6.0",
     "eslint": "^4.4.1",
-    "watch": "^1.0.2"
+    "watch": "^1.0.2",
+    "autoprefixer": "6.5.4",
+    "babel-core": "6.20.0",
+    "babel-eslint": "7.1.1",
+    "babel-jest": "18.0.0",
+    "babel-loader": "6.2.10",
+    "babel-plugin-transform-react-constant-elements": "6.9.1",
+    "babel-plugin-transform-react-remove-prop-types": "0.2.11",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-react": "6.16.0",
+    "babel-preset-react-hmre": "1.1.1",
+    "babel-preset-stage-1": "6.16.0",
+    "browser-sync": "2.18.5",
+    "chalk": "1.1.3",
+    "connect-history-api-fallback": "1.3.0",
+    "coveralls": "2.11.15",
+    "css-loader": "0.26.1",
+    "enzyme": "2.6.0",
+    "eslint-plugin-import": "2.2.0",
+    "eslint-plugin-react": "6.8.0",
+    "eslint-watch": "2.1.14",
+    "extract-text-webpack-plugin": "2.1.0",
+    "file-loader": "0.9.0",
+    "html-webpack-plugin": "2.24.1",
+    "identity-obj-proxy": "3.0.0",
+    "jest": "18.1.0",
+    "json-loader": "0.5.4",
+    "mockdate": "2.0.1",
+    "node-sass": "^4.5.2",
+    "npm-run-all": "3.1.2",
+    "opn-cli": "^3.1.0",
+    "postcss-loader": "1.2.1",
+    "prompt": "1.0.0",
+    "prop-types": "15.5.6",
+    "react-addons-test-utils": "15.4.1",
+    "replace": "0.3.0",
+    "rimraf": "2.5.4",
+    "sass-loader": "6.0.2",
+    "style-loader": "0.13.1",
+    "url-loader": "0.5.7",
+    "webpack": "2.2.1",
+    "webpack-bundle-analyzer": "2.1.1",
+    "webpack-dev-middleware": "1.9.0",
+    "webpack-hot-middleware": "2.17.1",
+    "webpack-md5-hash": "0.0.5"
   }
 }

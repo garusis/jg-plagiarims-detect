@@ -7,7 +7,7 @@ watch.createMonitor('src', function (monitor) {
   function start() {
     spawn("yarn", ["run", "compile"], {stdio: "inherit"})
       .on("exit", function () {
-        mainProcess = fork("./dist/index.js", {stdio: "inherit", env: process.env})
+        mainProcess = fork("./server/dist/index.js", {stdio: "inherit", env: process.env})
         mainProcess.on("exit", start)
       })
   }

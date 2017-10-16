@@ -30,3 +30,9 @@ in the terminal you can start the node server with `npm start` and test the API 
 If you want **debug** you need [jq](https://stedolan.github.io/jq/) and [curl](https://curl.haxx.se/)
 
 To start in debug mode, first stop the current docker environment (`yarn run d-stop:dev`) and then run `yarn run d-debug:dev` and open the url in Google Chrome
+
+### Common Issues
+
+If you are using Linux as Host S.O You probably should run in your Host's Terminal 
+`echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p` 
+to increase the limit on the number of files Linux will watch. [Here's why](https://github.com/coryhouse/react-slingshot/issues/6).

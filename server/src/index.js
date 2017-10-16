@@ -13,7 +13,7 @@ app.use(json())
 
 app.use(api)
 
-
-app.listen(process.env.PORT || 3000, function () {
-  console.log(`listening in ${process.env.PORT}`)
+const port = process.env.NODE_ENV === "local" ? process.env.API_PORT : process.env.PORT
+app.listen(port || 3000, function () {
+  console.log(`listening in ${port}`)
 })
