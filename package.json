@@ -22,15 +22,16 @@
 
 
     "start:api": "node $(yeval dist.server)",
-    "debug:api": "yarn run compile && node --inspect-brk=0.0.0.0:41628 ./dist/index.js",
-    "get-debug-url": "curl -s http://localhost:41628/json/list | jq -r '.[0].devtoolsFrontendUrl'",
-    "open-debug-chrome": "echo \"Open in Google Chrome: $(yarn run get-debug-url --silent)\"",
+    "debug:api": "yr compile:api && node --inspect-brk=0.0.0.0:41628 $(yeval dist.server)",
     "compile:api": "yr babel server/src -d server/dist --source-maps",
-    "watch:api": "dev_launcher",
+    "watch:api": "yr babel-node ./tools/api_launcher.js",
+    "get-debug-url": "curl -s http://localhost:41628/json/list | jq -r '.[0].devtoolsFrontendUrl'",
+    "open-debug-chrome": "echo \"Open in Google Chrome: $(yr --silent get-debug-url)\"",
 
 
 
     "babel": "./node_modules/.bin/babel",
+    "babel-node": "./node_modules/.bin/babel-node",
     "eval":"node -e \"console.log(require('./package.json').$OP)\"",
 
 

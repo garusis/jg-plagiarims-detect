@@ -1,7 +1,5 @@
-#!/usr/bin/env node
-
-const watch = require("watch")
-const {fork, spawn} = require("child_process")
+import watch from "watch"
+import {fork, spawn} from  "child_process"
 
 watch.createMonitor('./server/src', function (monitor) {
   let mainProcess
