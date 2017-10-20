@@ -7,41 +7,46 @@
   "engines": {
     "node": ">=8.2.0"
   },
-  "dist":{
+  "dist": {
     "server": "server/dist/index.js"
   },
-  "src":{
+  "src": {
     "server": "server/src/index.js"
   },
-  "docker":{
-    "image":"jg/seed",
-    "process":"jg-seed"
+  "docker": {
+    "image": "jg/seed",
+    "process": "jg-seed"
   },
   "scripts": {
     "start": "node .",
-
-
+    "eval": "node -e \"console.log(require('./package.json').$OP)\"",
     "start:api": "node $(yeval dist.server)",
     "debug:api": "yr compile:api && node --inspect-brk=0.0.0.0:41628 $(yeval dist.server)",
-    "compile:api": "yr babel server/src -d server/dist --source-maps",
-    "watch:api": "yr babel-node ./tools/api_launcher.js",
+    "compile:api": "babel server/src -d server/dist --source-maps",
+    "watch:api": "babel-node ./tools/api_launcher.js",
     "get-debug-url": "curl -s http://localhost:41628/json/list | jq -r '.[0].devtoolsFrontendUrl'",
     "open-debug-chrome": "echo \"Open in Google Chrome: $(yr --silent get-debug-url)\"",
-
-
-
-    "babel": "./node_modules/.bin/babel",
-    "babel-node": "./node_modules/.bin/babel-node",
-    "eval":"node -e \"console.log(require('./package.json').$OP)\"",
-
-
+    "start:all": "npm-run-all --parallel test:watch open:src lint:watch",
+    "open:src": "babel-node tools/srcServer.js",
+    "open:dist": "babel-node tools/distServer.js",
+    "lint": "esw webpack.config.* src tools --color",
+    "lint:watch": "npm run lint -- --watch",
+    "clean-dist": "npm run remove-dist && mkdir dist",
+    "remove-dist": "rimraf ./dist",
+    "prebuild": "npm run clean-dist && npm run lint && npm run test",
+    "build": "babel-node tools/build.js && npm run open:dist",
+    "test": "jest",
+    "test:CI": "babel-node tools/testCi.js",
+    "test:cover": "npm run test -- --coverage ",
+    "test:cover:CI": "npm run test:CI -- --coverage && cat ./coverage/lcov.info | node_modules/coveralls/bin/coveralls.js",
+    "test:watch": "npm run test -- --watch",
+    "open:cover": "npm run test:cover && opn ./coverage/lcov-report/index.html",
+    "analyze-bundle": "babel-node ./tools/analyzeBundle.js",
     "d-image-name": "OP='docker.image' yarn run --silent eval",
     "d-process-name": "OP='docker.process' yarn run eval --silent",
     "d-dirbase": "OP='name' yarn run eval --silent",
-
     "d-build": "yarn run compile && sudo docker build -f docker/prod.Dockerfile -t $(yarn run d-image-name --silent)-prod .",
     "d-run": "sudo docker run --rm -d -p 3001:3000 --name $(yarn run d-process-name --silent)-prod $(yarn run d-image-name --silent)-prod",
-
     "d-build:dev": "sudo docker build -f docker/dev.Dockerfile --build-arg \"USER=${USER}\" --build-arg \"UID=$(id -u $USER)\" --build-arg \"GID=$(id -g $USER)\" --build-arg \"DIR_BASE=$(yarn run d-dirbase --silent)\" -t $(yarn run d-image-name --silent)-dev .",
     "d-run:dev": "sudo docker run -d --network host -v \"$PWD:/home/node/$(yarn run d-dirbase --silent)\" -v \"$HOME/.cache:/home/emergeuser/.cache\" --name $(yarn run d-process-name --silent)-dev -it --entrypoint \"/bin/bash\" $(yarn run d-image-name --silent)-dev",
     "d-bash:dev": "sudo docker exec -it $(yarn run d-process-name --silent)-dev bash",
@@ -55,33 +60,30 @@
   "private": true,
   "dependencies": {
     "aws-sdk": "^2.102.0",
+    "axios": "^0.16.1",
     "babel-polyfill": "^6.26.0",
+    "babel-runtime": "^6.23.0",
     "body-parser": "^1.17.2",
+    "debug": "^2.6.8",
     "express": "^4.15.4",
     "helmet": "^3.8.1",
     "jsonwebtoken": "^7.4.3",
+    "less": "^2.7.2",
+    "less-loader": "^4.0.3",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
     "morgan": "^1.8.2",
-    "request": "^2.81.0",
-    "axios": "^0.16.1",
-    "babel-runtime": "^6.23.0",
-    "debug": "^2.6.8",
-    "less": "^2.7.2",
-    "less-loader": "^4.0.3",
     "react": "15.4.1",
     "react-dom": "15.4.1",
     "react-router": "3.0.0",
     "react-router-redux": "4.0.7",
     "react-tap-event-plugin": "^2.0.1",
+    "request": "^2.81.0",
     "scriptjs": "^2.5.8"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.6.0",
-    "eslint": "^4.4.1",
-    "watch": "^1.0.2",
     "autoprefixer": "6.5.4",
+    "babel-cli": "^6.26.0",
     "babel-core": "6.20.0",
     "babel-eslint": "7.1.1",
     "babel-jest": "18.0.0",
@@ -89,6 +91,7 @@
     "babel-plugin-transform-react-constant-elements": "6.9.1",
     "babel-plugin-transform-react-remove-prop-types": "0.2.11",
     "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.0",
     "babel-preset-react": "6.16.0",
     "babel-preset-react-hmre": "1.1.1",
     "babel-preset-stage-1": "6.16.0",
@@ -98,9 +101,10 @@
     "coveralls": "2.11.15",
     "css-loader": "0.26.1",
     "enzyme": "2.6.0",
+    "eslint": "^4.4.1",
     "eslint-plugin-import": "2.2.0",
     "eslint-plugin-react": "6.8.0",
-    "eslint-watch": "2.1.14",
+    "eslint-watch": "^3.1.3",
     "extract-text-webpack-plugin": "2.1.0",
     "file-loader": "0.9.0",
     "html-webpack-plugin": "2.24.1",
@@ -109,7 +113,7 @@
     "json-loader": "0.5.4",
     "mockdate": "2.0.1",
     "node-sass": "^4.5.2",
-    "npm-run-all": "3.1.2",
+    "npm-run-all": "^4.1.1",
     "opn-cli": "^3.1.0",
     "postcss-loader": "1.2.1",
     "prompt": "1.0.0",
@@ -120,6 +124,7 @@
     "sass-loader": "6.0.2",
     "style-loader": "0.13.1",
     "url-loader": "0.5.7",
+    "watch": "^1.0.2",
     "webpack": "2.2.1",
     "webpack-bundle-analyzer": "2.1.1",
     "webpack-dev-middleware": "1.9.0",

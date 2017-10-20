@@ -24,7 +24,7 @@ RUN chown jguser:jguser -R ${HOME}
 
 USER jguser
 
-RUN echo 'PATH=$PATH:$HOME/$DIR_BASE/scripts' >> ~/.bashrc
+RUN echo 'PATH=$PATH:$HOME/$DIR_BASE/scripts:$HOME/$DIR_BASE/node_modules/.bin' >> ~/.bashrc
 RUN echo 'source ~/.env' >> ~/.bashrc
 RUN echo 'chmod +x -R $HOME/$DIR_BASE/scripts' >> ~/.bashrc
 RUN sudo ln -s $HOME/$DIR_BASE/.env $HOME/.env
