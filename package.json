@@ -14,8 +14,8 @@
     "server": "server/src/index.js"
   },
   "docker": {
-    "image": "jg/seed",
-    "process": "jg-seed"
+    "image": "jg/plagiarims-dectect",
+    "process": "jg-plagiarims-dectect"
   },
   "scripts": {
     "start": "node .",
