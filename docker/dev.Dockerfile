@@ -10,6 +10,7 @@ ENV DIR_BASE $DIR_BASE
 
 RUN echo "deb http://ftp.debian.org/debian wheezy-backports main" >> /etc/apt/sources.list
 RUN apt-get update --fix-missing
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y sudo apt-transport-https procps jq
 RUN echo '\
 Defaults  env_reset\n\
 root  ALL=(ALL:ALL) ALL\n\
