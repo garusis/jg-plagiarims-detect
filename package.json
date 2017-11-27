@@ -20,33 +20,26 @@
   "scripts": {
     "start": "node .",
     "eval": "node -e \"console.log(require('./package.json').$OP)\"",
-
     "start:api": "node $(yeval dist.server)",
     "debug:api": "yr compile:api && node --inspect-brk=0.0.0.0:41628 $(yeval dist.server)",
     "compile:api": "babel server/src -d server/dist --source-maps",
     "watch:api": "babel-node ./tools/api_launcher.js",
-
     "get-debug-url": "curl -s http://localhost:41628/json/list | jq -r '.[0].devtoolsFrontendUrl'",
     "open-debug-chrome": "echo \"Open in Google Chrome: $(yr --silent get-debug-url)\"",
-
-
     "d-image-name": "OP='docker.image' yarn run --silent eval",
     "d-process-name": "OP='docker.process' yarn run --silent eval",
     "d-dirbase": "OP='name' yarn run --silent eval",
     "d-build": "yarn run compile && sudo docker build -f docker/prod.Dockerfile -t $(yarn run --silent d-image-name)-prod .",
     "d-run": "sudo docker run --rm -d -p 3001:3000 --name $(yarn run --silent d-process-name)-prod $(yarn run --silent d-image-name)-prod",
     "d-build:dev": "sudo docker build -f docker/dev.Dockerfile --build-arg \"USER=${USER}\" --build-arg \"UID=$(id -u $USER)\" --build-arg \"GID=$(id -g $USER)\" --build-arg \"DIR_BASE=$(yarn run --silent d-dirbase)\" -t $(yarn run --silent d-image-name)-dev .",
-    "d-run:dev": "sudo docker run -d --network host -v \"$PWD:/home/node/$(yarn run --silent d-dirbase)\" -v \"$HOME/.cache:/home/emergeuser/.cache\" --name $(yarn run --silent d-process-name)-dev -it --entrypoint \"/bin/bash\" $(yarn run --silent d-image-name)-dev",
+    "d-run:dev": "sudo docker run -d --network host -v \"$PWD:/home/node/$(yarn run --silent d-dirbase)\" -v \"$HOME/.cache:/home/node/.cache\" --name $(yarn run --silent d-process-name)-dev -it --entrypoint \"/bin/bash\" $(yarn run --silent d-image-name)-dev",
     "d-bash:dev": "sudo docker exec -it $(yarn run --silent d-process-name)-dev bash",
-    "d-debug:dev": "( sleep 8; yarn run open-debug-chrome ) & sudo docker run --rm  --network host -v \"$PWD:/home/node/$(yarn run d-dirbase --silent)\" -v \"$HOME/.cache:/home/emergeuser/.cache\" --name $(yarn run --silent d-process-name)-debug -it --entrypoint yarn $(yarn run --silent d-image-name)-dev run debug",
+    "d-debug:dev": "( sleep 8; yarn run open-debug-chrome ) & sudo docker run --rm  --network host -v \"$PWD:/home/node/$(yarn run d-dirbase --silent)\" -v \"$HOME/.cache:/home/node/.cache\" --name $(yarn run --silent d-process-name)-debug -it --entrypoint yarn $(yarn run --silent d-image-name)-dev run debug",
     "d-stop:dev": "sudo docker stop $(yarn run --silent d-process-name)-dev",
     "d-start:dev": "sudo docker start $(yarn run --silent d-process-name)-dev",
     "d-rebuild:dev": "yarn run d-stop:dev && yarn run d-rm:dev && yarn run d-rmi:dev && yarn run d-build:dev",
     "d-rm:dev": "sudo docker rm $(yarn run --silent d-process-name)-dev",
     "d-rmi:dev": "sudo docker rmi $(yarn run --silent d-image-name)-dev"
-
-
-
   },
   "private": true,
   "dependencies": {
@@ -65,6 +58,7 @@
     "scriptjs": "^2.5.8"
   },
   "devDependencies": {
+    "@angular/cli": "^1.5.4",
     "autoprefixer": "6.5.4",
     "babel-cli": "^6.26.0",
     "babel-core": "6.20.0",
