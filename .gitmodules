@@ -1,0 +1,3 @@
+[submodule "client"]
+	path = client
+	url = git@github.com:garusis/jg-plagiarims-detect-client.git
